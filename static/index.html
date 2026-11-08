@@ -1,0 +1,977 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>SENTINEL X — Web Trust Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{--bg:#080d18;--panel:#101a2b;--panel2:#0c1524;--line:#20324c;--text:#e9f1ff;--muted:#8fa3c0;--blue:#58b8ff;--cyan:#67e4e0;--green:#48d6a0;--red:#ff7187;--amber:#ffc66d}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 75% -15%,#142b49 0,transparent 38%),var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;min-height:100vh}
+.shell{max-width:1240px;margin:auto;padding:28px 26px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:22px}
+.brand{display:flex;align-items:center;gap:13px}
+.mark{width:42px;height:42px;border:1px solid #3473a8;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#173d61,#0b1a2e);color:var(--cyan);font-size:22px}
+.brand strong{font-size:18px;letter-spacing:2px}
+.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:2px;margin-top:3px}
+.status{font:11px 'DM Mono';color:var(--green);border:1px solid #235f51;background:#0d2a29;padding:8px 11px;border-radius:30px}
+.hero{padding:46px 0 28px;max-width:800px}
+.eyebrow{font:11px 'DM Mono';letter-spacing:2px;color:var(--cyan);text-transform:uppercase}
+.hero h1{font-size:clamp(30px,5vw,52px);line-height:1.12;letter-spacing:-2px;margin:13px 0}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--muted);font-size:14px;line-height:1.8;max-width:720px}
+.scanbox{background:linear-gradient(135deg,#121f33,#0d1727);border:1px solid #294361;border-radius:18px;padding:20px;box-shadow:0 20px 70px #0005}
+.scanlabel{font-size:12px;color:#b8c9df;margin-bottom:12px}
+.inputrow{display:flex;gap:10px}
+.inputrow input{flex:1;min-width:0;background:#080f1c;border:1px solid #2b405c;border-radius:10px;padding:16px;color:var(--text);font:13px 'DM Mono';outline:none}
+.inputrow input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #58b8ff20}
+.btn{border:0;border-radius:10px;background:linear-gradient(110deg,#2788d5,#36b9bd);color:#061321;font-weight:800;padding:0 23px;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:wait}
+.hint{color:#7389a8;font-size:11px;margin-top:10px}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-top:20px}
+.card{background:linear-gradient(145deg,#101b2d,#0d1625);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{font-size:13px;margin:0 0 16px}
+.muted{color:var(--muted)}
+.empty{color:#7388a5;font-size:13px;line-height:1.7}
+.scorewrap{display:flex;align-items:center;gap:22px}
+.score{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) 0deg,#263a55 0deg);position:relative}
+.score:before{content:'';position:absolute;inset:8px;background:#101a2b;border-radius:50%}
+.score b{position:relative;font:30px 'DM Mono'}
+.score small{position:relative;font-size:9px;color:var(--muted);margin-top:-26px}
+.verdict{font-size:18px;font-weight:800}
+.pill{display:inline-block;border-radius:30px;padding:5px 9px;font:10px 'DM Mono';margin-top:8px;background:#18344b;color:var(--blue)}
+.pill.high{background:#3a1b2b;color:var(--red)}
+.pill.medium{background:#3b3020;color:var(--amber)}
+.pill.low{background:#12352e;color:var(--green)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.metric{padding:13px;border-radius:11px;background:#0a1423;border:1px solid #1d3049}
+.metric small{display:block;color:var(--muted);font-size:10px}
+.metric b{display:block;font:20px 'DM Mono';margin-top:7px}
+.sectiontitle{font-size:11px;color:#b8c9df;letter-spacing:1px;text-transform:uppercase;margin:25px 0 12px}
+.findings{display:grid;gap:9px}
+.finding{padding:12px;border:1px solid #243751;background:#0b1524;border-radius:10px}
+.finding strong{font-size:12px}
+.finding p{font-size:11px;color:var(--muted);line-height:1.6;margin:5px 0 0}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;background:var(--blue)}
+.dot.high{background:var(--red)}
+.dot.medium{background:var(--amber)}
+.dot.low{background:var(--green)}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.kv{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #1e3048;padding:10px 0;font-size:11px}
+.kv span:first-child{color:var(--muted)}
+.kv span:last-child{text-align:right;overflow-wrap:anywhere}
+.feed{display:grid;gap:9px}
+.report{border-bottom:1px solid #1e3048;padding:10px 0;font-size:11px}
+.report small{display:block;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.secondary{background:#14243a;color:#c9d9ee;border:1px solid #2a405e;padding:10px 13px;border-radius:9px;font-size:11px;cursor:pointer}
+.foot{margin-top:32px;padding-top:17px;border-top:1px solid var(--line);color:#7286a2;font-size:10px;line-height:1.7}
+.notice{font-size:11px;color:var(--amber);background:#302719;border:1px solid #5a4626;padding:11px 13px;border-radius:10px;margin-top:14px}
+.hidden{display:none!important}
+
+/* COMMUNITY INTELLIGENCE DASHBOARD */
+.community-dashboard{margin-top:20px}
+.community-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.community-stat{padding:16px;border:1px solid #1d3049;border-radius:12px;background:#0a1423}
+.community-stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px;text-transform:uppercase}
+.community-stat b{display:block;font:25px 'DM Mono';margin-top:9px;color:var(--text)}
+.community-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.community-list{display:grid;gap:10px;margin-top:14px}
+.community-item{padding:14px;border:1px solid #243751;background:#0b1524;border-radius:11px}
+.community-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.community-domain{font:12px 'DM Mono';overflow-wrap:anywhere;color:var(--text)}
+.community-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.community-tag{display:inline-block;border:1px solid #294361;border-radius:20px;padding:4px 8px;color:#a9c3df;font:10px 'DM Mono'}
+.community-tag.repeat{border-color:#76582d;background:#302719;color:var(--amber)}
+.community-tag.unverified{border-color:#76582d;background:#302719;color:var(--amber)}
+.community-item small{display:block;color:var(--muted);font-size:10px;line-height:1.6;margin-top:9px}
+.community-loading{color:var(--muted);font-size:12px;line-height:1.7;padding:12px 0}
+
+/* SEARCH AND FILTER CONTROLS */
+.community-filters{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(150px,1fr) minmax(150px,1fr);gap:10px;margin-top:20px}
+.community-control{width:100%;min-width:0;background:#080f1c;border:1px solid #2b405c;border-radius:9px;padding:12px;color:#e9f1ff;font:11px 'DM Mono';outline:none}
+.community-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px #58b8ff20}
+.community-result-count{color:var(--cyan);font:11px 'DM Mono';margin-left:8px}
+.community-empty{padding:16px;border:1px dashed #294361;border-radius:10px;color:var(--muted);font-size:12px;line-height:1.7}
+
+@media(max-width:800px){
+  .community-stats{grid-template-columns:repeat(2,1fr)}
+  .community-filters{grid-template-columns:1fr}
+  .grid,.twocol{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .inputrow{flex-direction:column}
+  .btn{padding:14px}
+  .shell{padding:18px 14px 40px}
+  .hero{padding-top:34px}
+  .scorewrap{gap:15px}
+}
+</style>
+</head>
+
+<body>
+<main class="shell">
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">⬡</div>
+    <div>
+      <strong>SENTINEL X</strong>
+      <small>WEB TRUST & THREAT INTELLIGENCE</small>
+    </div>
+  </div>
+  <div class="status">● SYSTEM ONLINE</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Unified website investigation</div>
+  <h1>Know what you're <span>connecting to.</span></h1>
+  <p>Investigate suspicious websites through URL threat indicators, TLS certificate validation, security-header assessment and community intelligence — with an explainable evidence report.</p>
+</section>
+
+<section class="scanbox">
+  <div class="scanlabel">ENTER A PUBLIC WEBSITE URL TO INVESTIGATE</div>
+  <div class="inputrow">
+    <input id="url" type="text" placeholder="https://example.com" autocomplete="url">
+    <button class="btn" id="scanBtn" onclick="scan()">ANALYSE WEBSITE ↗</button>
+  </div>
+  <div class="hint">Only public HTTP/HTTPS websites are accepted. Private and local network targets are blocked.</div>
+</section>
+
+<section id="results" class="hidden">
+
+  <div class="grid">
+    <article class="card">
+      <h3>UNIFIED RISK ASSESSMENT</h3>
+      <div class="scorewrap">
+        <div class="score" id="scoreRing">
+          <b id="score">—</b>
+          <small>/ 100</small>
+        </div>
+        <div>
+          <div class="verdict" id="verdict">Awaiting investigation</div>
+          <div class="muted" id="host" style="font:11px 'DM Mono';margin-top:6px"></div>
+          <span id="riskPill" class="pill">NOT SCANNED</span>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><small>URL signals</small><b id="mUrl">—</b></div>
+        <div class="metric"><small>Header gaps</small><b id="mHeaders">—</b></div>
+        <div class="metric"><small>TLS concern</small><b id="mTls">—</b></div>
+        <div class="metric"><small>Community</small><b id="mCommunity">—</b></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>INVESTIGATION SUMMARY</h3>
+      <div id="summary" class="empty">Run a scan to see the evidence summary.</div>
+      <div class="actions">
+        <button class="secondary" onclick="downloadReport()">↓ Export JSON report</button>
+        <button class="secondary" onclick="document.getElementById('reportBox').scrollIntoView({behavior:'smooth'})">Report a website</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="sectiontitle">EVIDENCE & FINDINGS</div>
+  <div id="findings" class="findings"></div>
+
+  <div class="twocol">
+    <article class="card">
+      <h3>TLS / CERTIFICATE INTELLIGENCE</h3>
+      <div id="certDetails" class="empty">Certificate details will appear here.</div>
+    </article>
+    <article class="card">
+      <h3>WEB SECURITY HEADERS</h3>
+      <div id="headerDetails" class="empty">Header checks will appear here.</div>
+    </article>
+  </div>
+
+  <div class="twocol">
+    <article class="card">
+      <h3>COMMUNITY INTELLIGENCE MATCHES</h3>
+      <div id="matches" class="empty">No investigation loaded.</div>
+    </article>
+
+    <article class="card" id="reportBox">
+      <h3>CONTRIBUTE A THREAT REPORT</h3>
+      <div class="scanlabel">Share a suspicious website with the community queue.</div>
+
+      <select id="category" style="width:100%;padding:11px;background:#091321;color:#dce9f8;border:1px solid #2b405c;border-radius:8px">
+        <option value="phishing">Phishing</option>
+        <option value="impersonation">Brand impersonation</option>
+        <option value="fraud">Payment / recruitment fraud</option>
+        <option value="malware">Malware distribution</option>
+        <option value="other">Other suspicious activity</option>
+      </select>
+
+      <textarea id="details" placeholder="Optional evidence or context (no personal information)" style="width:100%;margin-top:9px;min-height:75px;padding:11px;background:#091321;color:#dce9f8;border:1px solid #2b405c;border-radius:8px;resize:vertical"></textarea>
+
+      <button class="secondary" style="margin-top:9px" onclick="submitReport()">SUBMIT COMMUNITY REPORT</button>
+      <div id="reportMsg" class="hint"></div>
+    </article>
+  </div>
+
+</section>
+
+<section class="card" id="threatDnaBox" style="margin-top:20px">
+  <h3>THREAT DNA INTELLIGENCE</h3>
+
+  <p class="muted" style="font-size:12px;line-height:1.7">
+    Investigate domain similarities, potential brand impersonation
+    and previously reported community domains.
+  </p>
+
+  <div class="inputrow">
+    <input
+      id="threatDomain"
+      type="text"
+      placeholder="paypa1-login-example.com"
+      autocomplete="off"
+    >
+    <button class="btn" id="threatBtn" onclick="runThreatDNA()">
+      ANALYSE THREAT DNA ↗
+    </button>
+  </div>
+
+  <div id="threatStatus" class="hint">
+    Offline domain intelligence. DNS resolution is not required.
+  </div>
+
+  <div id="threatResults" class="hidden" style="margin-top:20px">
+
+    <div class="finding">
+      <strong>THREAT PROFILE</strong>
+      <p id="threatProfile"></p>
+    </div>
+
+    <div class="sectiontitle">BRAND LOOKALIKE DETECTION</div>
+    <div id="brandMatches" class="findings"></div>
+
+    <div class="sectiontitle">RELATED COMMUNITY DOMAINS</div>
+    <div id="dnaCommunity" class="findings"></div>
+
+    <div class="sectiontitle">DETECTED SIGNALS</div>
+    <div id="dnaSignals" class="findings"></div>
+
+    <div class="notice" id="dnaNote"></div>
+
+  </div>
+</section>
+
+<section class="card community-dashboard" id="communityDashboard">
+  <div class="community-toolbar">
+    <div>
+      <h3 style="margin-bottom:5px">COMMUNITY INTELLIGENCE DASHBOARD</h3>
+      <div class="hint" style="margin-top:0">Live overview of community-submitted website reports.</div>
+    </div>
+    <button class="secondary" id="refreshCommunityBtn" onclick="loadCommunity()">↻ REFRESH DATA</button>
+  </div>
+
+  <div class="community-stats">
+    <div class="community-stat">
+      <small>Unique reported domains</small>
+      <b id="communityDomains">—</b>
+    </div>
+    <div class="community-stat">
+      <small>Total submissions</small>
+      <b id="communitySubmissions">—</b>
+    </div>
+    <div class="community-stat">
+      <small>Repeat submissions</small>
+      <b id="communityRepeats">—</b>
+    </div>
+    <div class="community-stat">
+      <small>Report categories</small>
+      <b id="communityCategories">—</b>
+    </div>
+  </div>
+
+  <div class="community-filters">
+    <input
+      id="communitySearch"
+      class="community-control"
+      type="search"
+      placeholder="Search reported domains..."
+      autocomplete="off"
+      oninput="renderCommunityReports()"
+      aria-label="Search reported domains"
+    >
+
+    <select
+      id="communityCategoryFilter"
+      class="community-control"
+      onchange="renderCommunityReports()"
+      aria-label="Filter reports by category"
+    >
+      <option value="all">All categories</option>
+      <option value="phishing">Phishing</option>
+      <option value="impersonation">Brand impersonation</option>
+      <option value="fraud">Fraud</option>
+      <option value="malware">Malware</option>
+      <option value="other">Other</option>
+    </select>
+
+    <select
+      id="communityRepeatFilter"
+      class="community-control"
+      onchange="renderCommunityReports()"
+      aria-label="Filter repeat submissions"
+    >
+      <option value="all">All submissions</option>
+      <option value="repeat">Repeat submissions</option>
+      <option value="single">Single submissions</option>
+    </select>
+  </div>
+
+  <div class="sectiontitle" style="margin-top:20px">
+    RECENT COMMUNITY ACTIVITY
+    <span id="communityResultCount" class="community-result-count"></span>
+  </div>
+
+  <div id="communityActivity" class="community-list">
+    <div class="community-loading">Loading community intelligence…</div>
+  </div>
+
+  <div id="communityStatus" class="hint">Report data is community-submitted and remains unverified unless separately reviewed.</div>
+</section>
+
+<section class="twocol" style="margin-top:20px">
+
+  <article class="card">
+    <h3>HOW SENTINEL X INVESTIGATES</h3>
+    <div class="kv"><span>01 / Threat analysis</span><span>URL and domain signals</span></div>
+    <div class="kv"><span>02 / Web assessment</span><span>Security response headers</span></div>
+    <div class="kv"><span>03 / Certificate</span><span>TLS trust and expiry</span></div>
+    <div class="kv"><span>04 / Community</span><span>Reported domain matches</span></div>
+  </article>
+
+  <article class="card">
+    <h3>RECENT INVESTIGATIONS</h3>
+    <div id="recent" class="feed empty">No scans recorded yet.</div>
+  </article>
+
+</section>
+
+<div class="notice">
+  Prototype notice: a low risk score is not a guarantee of safety. This version uses transparent heuristics and technical checks; external reputation feeds, trained ML classification and certificate-transparency history are not yet integrated.
+</div>
+
+<footer class="foot">
+  SENTINEL X · Hackathon prototype · Use only for authorised defensive assessment of public websites. No exploit testing is performed. Risk scores are evidence-based indicators, not definitive attribution.
+</footer>
+
+</main>
+
+<script>
+let latest = null;
+let communityReports = [];
+
+const $ = id => document.getElementById(id);
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, {
+    headers: {'Content-Type': 'application/json'},
+    ...opts
+  });
+
+  const data = await r.json().catch(() => ({
+    detail: 'Unexpected server response'
+  }));
+
+  if (!r.ok) throw new Error(data.detail || 'Request failed');
+
+  return data;
+}
+
+/* MAIN SCAN + AUTOMATIC THREAT DNA */
+
+async function scan() {
+  const url = $('url').value.trim();
+
+  if (!url) {
+    $('url').focus();
+    return;
+  }
+
+  const b = $('scanBtn');
+  b.disabled = true;
+  b.textContent = 'INVESTIGATING…';
+
+  try {
+    const d = await api('/api/scan', {
+      method: 'POST',
+      body: JSON.stringify({url})
+    });
+
+    latest = d;
+    render(d);
+
+    $('results').classList.remove('hidden');
+
+    $('threatDomain').value = d.host;
+    runThreatDNA();
+
+    $('results').scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+    loadRecent();
+    loadCommunity();
+
+  } catch (e) {
+    alert('Investigation could not complete: ' + e.message);
+
+  } finally {
+    b.disabled = false;
+    b.textContent = 'ANALYSE WEBSITE ↗';
+  }
+}
+
+function render(d) {
+  $('score').textContent = d.score;
+
+  $('scoreRing').style.background =
+    `conic-gradient(${
+      d.risk_level === 'high' ? '#ff7187' :
+      d.risk_level === 'medium' ? '#ffc66d' :
+      '#48d6a0'
+    } ${d.score * 3.6}deg,#263a55 0deg)`;
+
+  $('verdict').textContent = d.verdict;
+  $('host').textContent = d.host;
+
+  $('riskPill').textContent =
+    d.risk_level.toUpperCase() + ' CONCERN';
+
+  $('riskPill').className = 'pill ' + d.risk_level;
+
+  $('mUrl').textContent = d.components.url_heuristics;
+  $('mHeaders').textContent = d.components.security_headers;
+  $('mTls').textContent = d.components.certificate;
+  $('mCommunity').textContent = d.components.community_reports;
+
+  $('summary').innerHTML = `
+    <div class="kv">
+      <span>Scanned URL</span>
+      <span>${esc(d.url)}</span>
+    </div>
+    <div class="kv">
+      <span>HTTP status</span>
+      <span>${d.http_status ?? 'Unavailable'}</span>
+    </div>
+    <div class="kv">
+      <span>Redirects</span>
+      <span>${d.redirects.length}</span>
+    </div>
+    <div class="kv">
+      <span>Final destination</span>
+      <span>${esc(d.final_url)}</span>
+    </div>
+    <div class="kv">
+      <span>Scan time</span>
+      <span>${new Date(d.scanned_at).toLocaleString()}</span>
+    </div>
+  `;
+
+  $('findings').innerHTML = d.findings.map(f => `
+    <div class="finding">
+      <strong>
+        <i class="dot ${esc(f.severity)}"></i>
+        ${esc(f.title)}
+      </strong>
+      <p>${esc(f.detail)}</p>
+    </div>
+  `).join('');
+
+  const c = d.certificate;
+
+  $('certDetails').innerHTML = `
+    <div class="kv">
+      <span>Validation</span>
+      <span>${c.valid ? 'Trusted TLS handshake' : 'Not validated'}</span>
+    </div>
+    <div class="kv">
+      <span>Issuer</span>
+      <span>${esc(c.issuer || c.error || 'Unavailable')}</span>
+    </div>
+    <div class="kv">
+      <span>Subject</span>
+      <span>${esc(c.subject || 'Unavailable')}</span>
+    </div>
+    <div class="kv">
+      <span>Expires</span>
+      <span>${esc(c.not_after || 'Unavailable')}</span>
+    </div>
+    <div class="kv">
+      <span>Days remaining</span>
+      <span>${c.days_remaining ?? '—'}</span>
+    </div>
+    <div class="kv">
+      <span>TLS version</span>
+      <span>${esc(c.tls_version || '—')}</span>
+    </div>
+  `;
+
+  const hs = d.security_headers;
+
+  $('headerDetails').innerHTML =
+    Object.entries(hs).length
+      ? Object.entries(hs).map(([k, v]) => `
+          <div class="kv">
+            <span>${esc(k)}</span>
+            <span style="color:${v ? '#48d6a0' : '#ff7187'}">
+              ${v ? 'PRESENT' : 'MISSING'}
+            </span>
+          </div>
+        `).join('')
+      : 'No HTTP response headers available.';
+
+  $('matches').innerHTML =
+    d.community_reports.length
+      ? d.community_reports.map(r => `
+          <div class="report">
+            <b>${esc(r.category)}</b> · ${esc(r.status)}
+            <small>
+              ${esc(r.details || r.url)} ·
+              ${new Date(r.created_at).toLocaleDateString()}
+            </small>
+          </div>
+        `).join('')
+      : 'No community reports matched this hostname.';
+}
+
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+}
+
+async function submitReport() {
+  const url = latest?.url || $('url').value.trim();
+
+  if (!url) {
+    $('reportMsg').textContent = 'Enter or scan a URL first.';
+    return;
+  }
+
+  try {
+    const d = await api('/api/reports', {
+      method: 'POST',
+      body: JSON.stringify({
+        url,
+        category: $('category').value,
+        details: $('details').value
+      })
+    });
+
+    $('reportMsg').textContent =
+      `Report #${d.id} added to the unverified community queue.`;
+
+    $('details').value = '';
+    await loadCommunity();
+
+  } catch (e) {
+    $('reportMsg').textContent = e.message;
+  }
+}
+
+function downloadReport() {
+  if (!latest) return;
+
+  const blob = new Blob(
+    [JSON.stringify(latest, null, 2)],
+    {type: 'application/json'}
+  );
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sentinel-x-${latest.host}.json`;
+  a.click();
+
+  URL.revokeObjectURL(a.href);
+}
+
+/* COMMUNITY INTELLIGENCE DASHBOARD */
+
+function formatCommunityDate(value) {
+  if (!value) return 'Timestamp unavailable';
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? 'Timestamp unavailable'
+    : date.toLocaleString();
+}
+
+/* Convert stored category names into the filter categories. */
+
+function normalizeCommunityCategory(value) {
+  const category = String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_-]+/g, '');
+
+  if (category.includes('phish')) return 'phishing';
+
+  if (
+    category.includes('impersonat') ||
+    category.includes('brandspoof') ||
+    category.includes('brandabuse')
+  ) return 'impersonation';
+
+  if (
+    category.includes('fraud') ||
+    category.includes('scam') ||
+    category.includes('payment') ||
+    category.includes('recruitment')
+  ) return 'fraud';
+
+  if (
+    category.includes('malware') ||
+    category.includes('ransomware') ||
+    category.includes('trojan')
+  ) return 'malware';
+
+  return 'other';
+}
+
+/* Apply search and filters to the cached report list. */
+
+function renderCommunityReports() {
+  const activity = $('communityActivity');
+
+  if (!activity) return;
+
+  const search = ($('communitySearch')?.value || '')
+    .trim()
+    .toLowerCase();
+
+  const categoryFilter =
+    $('communityCategoryFilter')?.value || 'all';
+
+  const repeatFilter =
+    $('communityRepeatFilter')?.value || 'all';
+
+  const filteredReports = communityReports.filter(report => {
+    const domain = String(
+      report.normalized_host || report.url || ''
+    ).toLowerCase();
+
+    const matchesSearch = !search || domain.includes(search);
+
+    const matchesCategory =
+      categoryFilter === 'all' ||
+      normalizeCommunityCategory(report.category) === categoryFilter;
+
+    const count = Math.max(
+      1,
+      Number(report.submission_count) || 1
+    );
+
+    const matchesRepeat =
+      repeatFilter === 'all' ||
+      (repeatFilter === 'repeat' && count > 1) ||
+      (repeatFilter === 'single' && count === 1);
+
+    return matchesSearch && matchesCategory && matchesRepeat;
+  });
+
+  const countLabel = $('communityResultCount');
+
+  if (countLabel) {
+    countLabel.textContent =
+      `${filteredReports.length} of ${communityReports.length} records`;
+  }
+
+  /* FIX: Bottom status now follows the active search and filters. */
+  $('communityStatus').textContent =
+    `Showing ${filteredReports.length} of ${communityReports.length} report record(s). Community submissions are unverified and are not proof of malicious activity.`;
+
+  activity.innerHTML = filteredReports.length
+    ? filteredReports.map(report => {
+        const count = Math.max(
+          1,
+          Number(report.submission_count) || 1
+        );
+
+        const domain = esc(
+          report.normalized_host || report.url || 'Unknown domain'
+        );
+
+        const category = esc(report.category || 'Uncategorised');
+        const status = esc(report.status || 'community-reported');
+
+        const details = esc(
+          report.details || 'No additional details supplied.'
+        );
+
+        const timestamp = esc(
+          formatCommunityDate(
+            report.last_reported_at || report.created_at
+          )
+        );
+
+        return `
+          <article class="community-item">
+            <div class="community-item-top">
+              <strong class="community-domain">${domain}</strong>
+              <span class="community-tag unverified">
+                UNVERIFIED REPORT
+              </span>
+            </div>
+
+            <div class="community-meta">
+              <span class="community-tag">${category}</span>
+
+              <span class="community-tag">
+                ${count} submission${count === 1 ? '' : 's'}
+              </span>
+
+              ${
+                count > 1
+                  ? '<span class="community-tag repeat">REPEAT ACTIVITY</span>'
+                  : ''
+              }
+
+              <span class="community-tag">${status}</span>
+            </div>
+
+            <small>${details}</small>
+            <small>Last reported: ${timestamp}</small>
+          </article>
+        `;
+      }).join('')
+    : '<div class="community-empty">No reports match your search and filter settings. Try changing or clearing the filters.</div>';
+}
+
+/* Load reports and update dashboard statistics. */
+
+async function loadCommunity() {
+  const refreshButton = $('refreshCommunityBtn');
+  const activity = $('communityActivity');
+
+  if (refreshButton) {
+    refreshButton.disabled = true;
+    refreshButton.textContent = 'LOADING…';
+  }
+
+  try {
+    const data = await api('/api/reports');
+    const reports = Array.isArray(data.reports) ? data.reports : [];
+
+    // Keep the complete API result set for instant filtering.
+    communityReports = [...reports].sort((a, b) => {
+      const dateA = new Date(
+        a.last_reported_at || a.created_at || 0
+      ).getTime() || 0;
+
+      const dateB = new Date(
+        b.last_reported_at || b.created_at || 0
+      ).getTime() || 0;
+
+      return dateB - dateA;
+    });
+
+    // Statistics describe all reports, not just filtered results.
+    const uniqueDomains = new Set(
+      reports
+        .map(report => String(report.normalized_host || '').toLowerCase())
+        .filter(Boolean)
+    ).size;
+
+    const totalSubmissions = reports.reduce(
+      (total, report) =>
+        total + Math.max(1, Number(report.submission_count) || 1),
+      0
+    );
+
+    const repeatSubmissions = reports.reduce(
+      (total, report) =>
+        total + Math.max(0, (Number(report.submission_count) || 1) - 1),
+      0
+    );
+
+    const categories = new Set(
+      reports
+        .map(report => String(report.category || '').trim().toLowerCase())
+        .filter(Boolean)
+    ).size;
+
+    $('communityDomains').textContent = uniqueDomains;
+    $('communitySubmissions').textContent = totalSubmissions;
+    $('communityRepeats').textContent = repeatSubmissions;
+    $('communityCategories').textContent = categories;
+
+    // Render using the current search and filter settings.
+    renderCommunityReports();
+
+    /* The filtered status is now handled inside renderCommunityReports(). */
+
+  } catch (error) {
+    communityReports = [];
+
+    if (activity) {
+      activity.innerHTML =
+        '<div class="community-loading">Could not load community reports. Check that the SENTINEL X backend is running, then refresh.</div>';
+    }
+
+    $('communityResultCount').textContent = '';
+
+    $('communityStatus').textContent =
+      'Community data request failed: ' + error.message;
+
+  } finally {
+    if (refreshButton) {
+      refreshButton.disabled = false;
+      refreshButton.textContent = '↻ REFRESH DATA';
+    }
+  }
+}
+
+/* RECENT INVESTIGATIONS */
+
+async function loadRecent() {
+  try {
+    const d = await api('/api/scans/recent');
+
+    $('recent').innerHTML =
+      d.scans.length
+        ? d.scans.map(s => `
+            <div class="report">
+              <b>${esc(s.host)}</b>
+              <span style="float:right">${s.score}/100</span>
+              <small>
+                ${esc(s.verdict)} ·
+                ${new Date(s.created_at).toLocaleString()}
+              </small>
+            </div>
+          `).join('')
+        : 'No scans recorded yet.';
+
+  } catch {}
+}
+
+/* THREAT DNA FRONTEND INTEGRATION */
+
+async function runThreatDNA() {
+  const domain = $('threatDomain').value.trim();
+
+  if (!domain) {
+    $('threatDomain').focus();
+    return;
+  }
+
+  const btn = $('threatBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'ANALYSING…';
+
+  $('threatStatus').textContent =
+    'Analysing domain intelligence…';
+
+  $('threatResults').classList.add('hidden');
+
+  try {
+    const data = await api('/api/threat-dna', {
+      method: 'POST',
+      body: JSON.stringify({domain})
+    });
+
+    const dna = data.threat_dna;
+
+    $('threatProfile').textContent =
+      dna.profile || 'No profile available';
+
+    const brandMatches = dna.brand_lookalikes || [];
+
+    $('brandMatches').innerHTML =
+      brandMatches.length
+        ? brandMatches.map(item => `
+            <div class="finding">
+              <strong>
+                ${esc(item.brand.toUpperCase())}
+                · ${Math.round(item.similarity * 100)}% similarity
+              </strong>
+              <p>${esc(item.evidence)}</p>
+            </div>
+          `).join('')
+        : '<div class="empty">No brand lookalikes detected.</div>';
+
+    const communityMatches =
+      dna.related_community_domains || [];
+
+    $('dnaCommunity').innerHTML =
+      communityMatches.length
+        ? communityMatches.map(item => `
+            <div class="finding">
+              <strong>${esc(item.host)}</strong>
+              <p>
+                ${esc(item.category)} ·
+                ${Math.round(item.similarity * 100)}% similarity
+              </p>
+              <p>Status: ${esc(item.status)}</p>
+              <p>${esc(item.evidence)}</p>
+            </div>
+          `).join('')
+        : '<div class="empty">No related community domains found.</div>';
+
+    const signals = dna.signals || [];
+
+    $('dnaSignals').innerHTML =
+      signals.length
+        ? signals.map(signal => `
+            <div class="finding">
+              <strong>${esc(signal)}</strong>
+            </div>
+          `).join('')
+        : '<div class="empty">No additional signals detected.</div>';
+
+    $('dnaNote').textContent =
+      dna.note ||
+      'Similarity is an indicator, not proof of malicious activity.';
+
+    $('threatStatus').textContent =
+      'Analysis completed successfully.';
+
+    $('threatResults').classList.remove('hidden');
+
+  } catch (error) {
+    $('threatStatus').textContent =
+      'Analysis failed: ' + error.message;
+
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'ANALYSE THREAT DNA ↗';
+  }
+}
+
+/* KEYBOARD SHORTCUTS */
+
+$('url').addEventListener('keydown', e => {
+  if (e.key === 'Enter') scan();
+});
+
+$('threatDomain').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runThreatDNA();
+});
+
+/* INITIAL PAGE LOAD */
+
+loadRecent();
+loadCommunity();
+
+</script>
+
+</body>
+</html>
